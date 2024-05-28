@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://ntn1804:cQwaUsxbc1S8L6Bk@cluster0.ez9w54w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: Test
