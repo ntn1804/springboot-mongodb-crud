@@ -3,10 +3,12 @@ package com.javatechie.service;
 import com.javatechie.model.Task;
 import com.javatechie.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class TaskService {
@@ -16,13 +18,18 @@ public class TaskService {
 
     // Create
     public Task addTask(Task task) {
-        task.setTaskId((UUID.randomUUID().toString().split("-")[0]));
+//        task.setTaskId((UUID.randomUUID().toString().split("-")[0]));
         return taskRepository.save(task);
     }
 
     // Read
-    public List<Task> findAllTasks() {
-        return taskRepository.findAll();
+    public List<Task> findAllTasks(Pageable pageable) {
+        List<Task> taskList = new ArrayList<>();
+        Page<Task> taskPage = taskRepository.findAll(pageable);
+        for (Task task : taskPage) {
+            taskList.add(task);
+        }
+        return taskList;
     }
 
     public Task getTaskByTaskId(String taskId) {
@@ -38,10 +45,10 @@ public class TaskService {
     }
 
     // Update
-    public Task updateTask(Task taskRequest) {
+    public Task updateTask(String taskId, Task taskRequest) {
 
         // get existing task from db
-        Task existingTask = taskRepository.findById(taskRequest.getTaskId()).get();
+        Task existingTask = taskRepository.findById(taskId).get();
 
         // set new values to existing task
         existingTask.setDescription(taskRequest.getDescription());
@@ -56,6 +63,6 @@ public class TaskService {
     // Delete
     public String deleteTask(String taskId) {
         taskRepository.deleteById(taskId);
-        return "Object with task ID " + taskId + " has been deleted successfully";
+        return "Task ID " + taskId + " has been deleted successfully";
     }
 }

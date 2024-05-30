@@ -1,8 +1,12 @@
 package com.javatechie.controller;
 
+import com.javatechie.Enum.SortField;
 import com.javatechie.model.Task;
 import com.javatechie.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +26,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.findAllTasks();
+    public List<Task> getAllTasks(@RequestParam(defaultValue = "0") int offset,
+                                  @RequestParam(defaultValue = "3") int limit,
+                                  @RequestParam(defaultValue = "ID") SortField sortField,
+                                  @RequestParam(defaultValue = "ASC") Sort.Direction sortDirection) {
+        Pageable pageable = PageRequest.of(offset, limit, sortDirection, sortField.getTaskFieldName());
+        return taskService.findAllTasks(pageable);
     }
 
     @GetMapping("/{taskId}")
@@ -37,13 +45,14 @@ public class TaskController {
     }
 
     @GetMapping("/assignee/{assignee}")
-    public List<Task> getTasksByAssignee(@PathVariable String assignee){
+    public List<Task> getTasksByAssignee(@PathVariable String assignee) {
         return taskService.getTasksByAssignee(assignee);
     }
 
-    @PatchMapping
-    public Task modifyTask(@RequestBody Task task) {
-        return taskService.updateTask(task);
+    @PatchMapping("/{taskId}")
+    public Task modifyTask(@PathVariable String taskId,
+                           @RequestBody Task task) {
+        return taskService.updateTask(taskId, task);
     }
 
     @DeleteMapping("/{taskId}")
