@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface TaskRepository extends MongoRepository<Task, String> {
 
-    Page<Task> findByStoryPoint(int storyPoint, Pageable pageable);
-
     List<Task> findBySeverity(int severity);
 
     @Query("{assignee : ?0}")

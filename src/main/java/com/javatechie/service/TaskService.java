@@ -4,6 +4,7 @@ import com.javatechie.model.Task;
 import com.javatechie.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,8 @@ public class TaskService {
 
     // Read
     public List<Task> findAllTasks(Pageable pageable) {
-        List<Task> taskList = new ArrayList<>();
         Page<Task> taskPage = taskRepository.findAll(pageable);
-        for (Task task : taskPage) {
-            taskList.add(task);
-        }
-        return taskList;
+        return new ArrayList<>(taskPage.getContent());
     }
 
     public Task getTaskByTaskId(String taskId) {
